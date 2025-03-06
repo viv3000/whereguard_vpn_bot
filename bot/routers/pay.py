@@ -36,6 +36,7 @@ async def call_start_pay(call: CallbackQuery):
 @pay_router.callback_query(F.data == "pay")
 async def call_pay(call: CallbackQuery, state: FSMContext, bot: VPNBot):
     try:
+        await state.clear()
         builder = UserBuilder(call.from_user)
         user = builder.build()
 

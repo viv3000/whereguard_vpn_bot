@@ -20,6 +20,7 @@ class FormSupport(StatesGroup):
 @support_router.callback_query(F.data == "support", StateFilter(default_state))
 async def call_support(call: CallbackQuery, state: FSMContext):
     try:
+        await state.clear()
         await call.message.answer(text="Запрос в ТП:")
         logging.info(f"start support: {call.from_user.username}")
     except Exception as exception:
