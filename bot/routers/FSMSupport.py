@@ -20,20 +20,20 @@ class FormSupport(StatesGroup):
 @support_router.callback_query(F.data == "support", StateFilter(default_state))
 async def call_support(call: CallbackQuery, state: FSMContext):
     try:
-        await state.clear()
         await call.message.answer(text="Запрос в ТП:")
+        await state.set_state(FormSupport.support_message)
         logging.info(f"start support: {call.from_user.username}")
     except Exception as exception:
         logging.error(f"error in start support: {call.from_user.username}", exc_info=True)
 
 
-@support_router.message(F.text, StateFilter(default_state))
+@support_router.message(F.text, FormSupport.support_message)
 async def capture_support(message: Message, state: FSMContext, bot: Bot):
     try:
-        await state.set_state(FormSupport.support_message)
+        await state.update_data(support_message=FormSupport.support_message)
         await send_message_to_support(message.text, message.from_user, bot)
         await start(message.answer)
-        await state.clear()
         logging.info(f"send message: {message.text.encode()} to suport support: {message.from_user.username}")
+        await state.clear()
     except Exception as exception:
         logging.error(f"error in start support: {message.from_user.username}", exc_info=True)

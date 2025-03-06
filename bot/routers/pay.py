@@ -10,7 +10,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from services.entities import UserBuilder
 
 from bot.VPNBot import VPNBot
-from bot.handlers import start
+from bot.handlers import get_config, start
 from bot.helpers import send_message_to_log, send_message_to_support
 from bot.keyboards import pay_keyboard
 
@@ -71,7 +71,12 @@ async def successful_payment(message: Message, bot: Bot):
     try:
         builder = UserBuilder(message.from_user)
         user = builder.build()
-        await user.pay_processing(bot)
+        if user.is_payed():
+            await start(message.answer)
+        else:
+            user.pay()
+            await get_config(message.answer)
+            await start(message.answer)
         logging.info(f"successful_payment: {message.from_user.username}")
         await send_message_to_log(message.from_user, bot)
     except Exception as exception:
