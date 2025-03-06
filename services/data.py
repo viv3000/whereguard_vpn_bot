@@ -1,5 +1,6 @@
 import datetime
-import calendar 
+import calendar
+import os 
 
 from sqlalchemy import create_engine, select
 from sqlalchemy.exc import NoResultFound
@@ -100,6 +101,59 @@ class Data:
             session.commit()
         return id
 
+    @classmethod
+    def get_config(cls, tg_user): #rewrite, later
+        try: 
+            with Session(cls.engine) as session:
+                user = session.scalars(
+                    select(User)
+                    .where(User.tg_id.in_([tg_user.id]))
+                ).one()
+                try: 
+                    config = session.scalars(
+                        select(ConfigFile)
+                        .where(ConfigFile.id.in_([user.config_file_id]))
+                    ).one()
+                except NoResultFound as err:
+                    try:
+                        config = session.scalars(
+                            select(ConfigFile)
+                            .where(ConfigFile.is_use.in_([False]))
+                        ).all()[0]
+                    except NoResultFound as err:
+                        raise err
+            return config
+        except NoResultFound as err:
+            raise err
+
+
+    @classmethod
+    def compile_config_file(cls, config_file_id):
+        with Session(cls.engine) as session:
+            config = session.scalars(
+                select(ConfigFile).where(ConfigFile.id == config_file_id)
+            ).one()
+            server = session.scalars(
+                select(Server).where(Server.id == config.server_id)
+            ).one()
+            file = ("[Interface]\n" + 
+                "PrivateKey = " + config.private_key + "\n" +
+                "Address = " + Data.gen_wg_ip(config.id) + "\n" +
+                "DNS = 8.8.8.8\n\n" +
+                "[Peer]\n" +
+                "PublicKey = " + Data.gen_public_key(server.private_key) + "\n" +
+                "Endpoint = " + server.ip + ":" + server.port + "\n" +
+                "AllowedIPs = 0.0.0.0/0")
+        return file
+
+    @staticmethod
+    def gen_public_key(private_key):
+        return os.popen("echo " + private_key + " | wg pubkey").read()[0:-1]
+
+
+    @staticmethod
+    def gen_wg_ip(i):
+        return "10.11.84." + str(i) + "/32"
 
     @staticmethod
     def add_months(sourcedate, months):

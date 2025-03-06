@@ -32,7 +32,7 @@ async def capture_support(message: Message, state: FSMContext, bot: Bot):
     try:
         await state.update_data(support_message=FormSupport.support_message)
         await send_message_to_support(message.text, message.from_user, bot)
-        await start(message.answer)
+        await start(message, message.from_user)
         logging.info(f"send message: {message.text.encode()} to suport support: {message.from_user.username}")
         await state.clear()
     except Exception as exception:

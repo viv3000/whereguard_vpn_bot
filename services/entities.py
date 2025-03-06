@@ -37,14 +37,14 @@ class VPNUser:
     def pay(self):
         return Data.pay(self.user_data)
 
-"""
-    async def pay_processing(self, bot: Bot):
+
+    def get_config(self):
         if self.is_payed():
-            await bot.send_message(chat_id=self.user_data.id, text=f"не оплачено")
+            return Data.get_config(self.user_data)
         else:
-            self.pay()
-            await bot.send_message(chat_id=self.user_data.id, text=f"оплачено")
-"""
+            raise NoResultFound()
+
+
 
 class UserBuilder:
     def __init__(self, user_data: TGUser):
