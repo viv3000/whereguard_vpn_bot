@@ -7,12 +7,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state, State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 
+from services.entities import UserBuilder
+
 from bot.VPNBot import VPNBot
-from bot.entities import UserBuilder
 from bot.handlers import start
 from bot.helpers import send_message_to_log, send_message_to_support
 from bot.keyboards import pay_keyboard
-
 
 
 pay_router = Router()
