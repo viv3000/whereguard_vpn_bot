@@ -1,3 +1,4 @@
 __pycache__/
 .env
 wg0.conf
+db.sqlite
