@@ -1,25 +1,37 @@
 import asyncio
 import logging
 import sys
-from typing import Any, Optional
 
-from aiogram import Bot, Dispatcher
-from aiogram.client.default import DefaultBotProperties
-from aiogram.client.session.base import BaseSession
-from aiogram.enums import ParseMode
 from dotenv import dotenv_values
 
-from app import App
+from aiogram import Dispatcher
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
+
+from sqlalchemy import create_engine
+
 from bot.VPNBot import VPNBot
 from bot.router import router
 
+from db.models import Base
+
+from services.data import Data
+
+from app import App
+
 
 if __name__ == "__main__":
-    config = dotenv_values(".env") 
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    config = dotenv_values(".env") 
 
     TOKEN = str(config["TG_TOKEN"])
     PAY_TOKEN = str(config["TG_PAY_TOKEN"])
+
+
+    engine = create_engine("sqlite:///db.sqlite", echo=True)
+    Base.metadata.create_all(engine)
+    Data.engine = engine
+
 
     dispatcher = Dispatcher()
     dispatcher.include_routers(router)
