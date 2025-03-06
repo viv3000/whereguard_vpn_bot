@@ -61,6 +61,45 @@ class Data:
         except NoResultFound as err:
             raise err
 
+        
+    @classmethod
+    def create_server(cls, ip, ipwg, port, interface, wg_interface, private_key, public_key):
+        id = -1
+        with Session(cls.engine) as session:
+            server = Server(
+                ip = ip, 
+                ipwg = ipwg, 
+                port = port, 
+                interface = interface, 
+                wg_interface = wg_interface, 
+                private_key = private_key, 
+                public_key = public_key
+            )
+            session.add_all([server])
+            session.flush()
+            id = server.id
+            session.commit()
+        return id
+
+
+
+    @classmethod
+    def create_config_file(cls, config_id, ip, server_id, private_key, is_use):
+        id = -1
+        with Session(cls.engine) as session:
+            config_file = ConfigFile(
+                config_id = config_id,
+                ip = ip, 
+                server_id = server_id,
+                private_key = private_key,
+                is_use = is_use
+            )
+            session.add_all([config_file])
+            session.flush()
+            id = config_file.id
+            session.commit()
+        return id
+
 
     @staticmethod
     def add_months(sourcedate, months):
