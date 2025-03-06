@@ -41,6 +41,7 @@ async def call_pay(call: CallbackQuery, state: FSMContext, bot: VPNBot):
         user = builder.build()
 
         if user.is_payed():
+            await call.message.answer(text="Уже оплачено")
             await start(call.message.answer)
             logging.info(f"create pay invoice aborted (payed): {call.from_user.username}")
         else:
@@ -63,7 +64,12 @@ async def call_pay(call: CallbackQuery, state: FSMContext, bot: VPNBot):
 
 @pay_router.pre_checkout_query()
 async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
-    await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
+    builder = UserBuilder(pre_checkout_query.from_user)
+    user = builder.build()
+    if user.is_payed():
+        await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=False)
+    else:
+        await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
 
 
 @pay_router.message(F.successful_payment)
@@ -71,12 +77,9 @@ async def successful_payment(message: Message, bot: Bot):
     try:
         builder = UserBuilder(message.from_user)
         user = builder.build()
-        if user.is_payed():
-            await start(message.answer)
-        else:
-            user.pay()
-            await get_config(message.answer)
-            await start(message.answer)
+        user.pay()
+        await get_config(message.answer)
+        await start(message.answer)
         logging.info(f"successful_payment: {message.from_user.username}")
         await send_message_to_log(message.from_user, bot)
     except Exception as exception:
