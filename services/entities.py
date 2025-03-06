@@ -34,6 +34,10 @@ class VPNUser:
         return Data.get_expiration_date(self.user_data)
 
 
+    def pay(self):
+        return Data.pay(self.user_data)
+
+
     async def pay_processing(self, bot: Bot):
         await bot.send_message(chat_id=self.user_data.id, text=f"оплачено")
 

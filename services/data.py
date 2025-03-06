@@ -49,6 +49,19 @@ class Data:
             raise err
 
 
+    @classmethod
+    def pay(cls, tg_user):
+        try:
+            with Session(cls.engine) as session:
+                user = session.scalars(
+                    select(User).where(User.tg_id.in_([tg_user.id]))
+                ).one()
+                user.expiration_date = cls.add_months(datetime.datetime.today(), 1)
+                session.commit()
+        except NoResultFound as err:
+            raise err
+
+
     @staticmethod
     def add_months(sourcedate, months):
         month = sourcedate.month - 1 + months
@@ -56,3 +69,4 @@ class Data:
         month = month % 12 + 1
         day = min(sourcedate.day, calendar.monthrange(year,month)[1])
         return datetime.date(year, month, day)
+
