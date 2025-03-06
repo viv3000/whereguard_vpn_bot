@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import F, Bot, Router, types
 from aiogram.types import CallbackQuery, LabeledPrice, Message, PreCheckoutQuery, User
 from aiogram.filters import StateFilter
@@ -8,7 +10,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from bot.VPNBot import VPNBot
 from bot.entities import UserBuilder
 from bot.handlers import start
-from bot.helpers import send_message_to_support
+from bot.helpers import send_message_to_log, send_message_to_support
 from bot.keyboards import pay_keyboard
 
 
@@ -20,21 +22,28 @@ PRICE = LabeledPrice(label="Подписка на 1 месяц", amount=200*100)
 
 @pay_router.callback_query(F.data == "start_pay")
 async def call_start_pay(call: CallbackQuery):
-    await call.message.answer(
+    try:
+        await call.message.answer(
             text="Вот наши условия всего за 200 зублей в месяц:\n1. Быстрый vpn\n2. Защита туннеля протоколом wireguard\n", 
             reply_markup=pay_keyboard
-            )
+        )
+        logging.info(f"start_pay: {call.from_user.username}")
+    except Exception as exception:
+        logging.error(f"error in start_pay: {call.from_user.username}", exc_info=True)
+
 
 
 @pay_router.callback_query(F.data == "pay")
 async def call_pay(call: CallbackQuery, state: FSMContext, bot: VPNBot):
-    builder = UserBuilder(call.from_user)
-    user = builder.build()
+    try:
+        builder = UserBuilder(call.from_user)
+        user = builder.build()
 
-    if user.is_payed():
-        await start(call.message.answer)
-    else:
-        await bot.send_invoice(call.message.chat.id,
+        if user.is_payed():
+            await start(call.message.answer)
+            logging.info(f"create pay invoice aborted (payed): {call.from_user.username}")
+        else:
+            await bot.send_invoice(call.message.chat.id,
                         title="Подписка на VPN",
                         description="Активация подписки на VPN на 1 месяц",
                         provider_token=bot.pay_token,
@@ -46,6 +55,9 @@ async def call_pay(call: CallbackQuery, state: FSMContext, bot: VPNBot):
                         prices=[PRICE],
                         start_parameter="one-month-subscription",
                         payload="test-invoice-payload")
+            logging.info(f"create pay invoice: {call.from_user.username}")
+    except Exception as exception:
+        logging.error(f"error in create pay invoice: {call.from_user.username}", exc_info=True)
 
 
 @pay_router.pre_checkout_query()
@@ -55,8 +67,13 @@ async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
 
 @pay_router.message(F.successful_payment)
 async def successful_payment(message: Message, bot: Bot):
-    builder = UserBuilder(message.from_user)
-    user = builder.build()
-    await user.pay_processing(bot)
+    try:
+        builder = UserBuilder(message.from_user)
+        user = builder.build()
+        await user.pay_processing(bot)
+        logging.info(f"successful_payment: {message.from_user.username}")
+        await send_message_to_log(message.from_user, bot)
+    except Exception as exception:
+        logging.error(f"error in pay: {message.from_user.username}", exc_info=True)
 
 
