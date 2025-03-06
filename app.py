@@ -1,17 +1,14 @@
+from typing import Any, Optional
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
+from aiogram.client.session.base import BaseSession
 from aiogram.enums import ParseMode
 from dotenv import dotenv_values
 
 
 class App:
-    config = dotenv_values(".env") 
-
-    TOKEN = str(config["TG_TOKEN"])
-    PAY_TOKEN = str(config["TG_PAY_TOKEN"])
-
-    def __init__(self, dispatcher: Dispatcher) -> None:
-        self.bot = Bot(token=self.TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    def __init__(self, bot: Bot, dispatcher: Dispatcher) -> None:
+        self.bot = bot 
         self.dispatcher = dispatcher
 
     async def start(self) -> None:
