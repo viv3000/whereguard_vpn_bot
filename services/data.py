@@ -24,7 +24,7 @@ class Data:
 
 
     @classmethod
-    def create_user(cls, tg_user, subscription_end_date) -> User:
+    def create_user(cls, tg_user, expiration_date) -> User:
         user = None
         try:
             return cls.get_user_on_tg(tg_user)
@@ -33,12 +33,20 @@ class Data:
                 user = User(
                     tg_id = tg_user.id, 
                     tg_name = tg_user.username, 
-                    subscription_end_date = subscription_end_date,
+                    expiration_date = expiration_date,
                 )
                 session.add_all([user])
                 session.flush()
                 session.commit()
             return user
+
+
+    @classmethod
+    def get_expiration_date(cls, tg_user) -> datetime.datetime:
+        try:
+            return cls.get_user_on_tg(tg_user).expiration_date
+        except NoResultFound as err:
+            raise err
 
 
     @staticmethod

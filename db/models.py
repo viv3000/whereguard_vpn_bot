@@ -37,6 +37,6 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     tg_id: Mapped[str] = mapped_column(String(256))
     tg_name: Mapped[str] = mapped_column(String(256))
-    subscription_end_date = mapped_column(Date())
+    expiration_date = mapped_column(Date())
 
     config_file_id: Mapped[int] = mapped_column(ForeignKey("config_file.id"), nullable=True)
