@@ -1,31 +1,28 @@
+import datetime
 import io
-import random
-from PIL import Image
 
-from aiogram import Bot
-from aiogram.types import BufferedInputFile, CallbackQuery, Message, User
+from aiogram.types import BufferedInputFile, Message, User
+from bot.VPNBot import VPNBot
 from services.entities import UserBuilder
 from services.data import Data
 
-from bot.helpers import create_qr
+from bot.helpers import await_with_markup, await_with_markup_file, create_qr
 from bot.keyboards import start_keyboard, main_menu_keyboard
  
 
-async def start(message: Message, tg_user: User):
-    if message.from_user:
-        builder = UserBuilder(tg_user)
-        user = builder.build()
-        if user.is_payed():
-            await message.answer("Привет!", reply_markup=main_menu_keyboard)
-    else:
-        await message.answer("Привет! Этот бот предназначен для покупки VPN", reply_markup=start_keyboard)
+async def start(message: Message, tg_user: User, messages):
+    await await_with_markup(
+        message, 
+        messages["greetings"], messages["greetings_first"], 
+        tg_user, 
+        messages
+    )
 
 
-async def get_config(message: Message, tg_user: User):
-    await message.answer("Установи приложение wireguard\n <a href='https://play.google.com/store/apps/details?id=com.wireguard.android&hl=ru'>windows</a>\n<a href='https://play.google.com/store/apps/details?id=com.wireguard.android'>android</a>\n<a href='https://apps.apple.com/ru/app/wireguard/id1441195209'>ios</a>\n<a href='https://www.wireguard.com/install/'>остальное</a>")
+async def get_config(message: Message, tg_user: User, messages):
     builder = UserBuilder(tg_user)
     user = builder.build()
-    print(user.user_data.id)
+
     config = user.get_config()
 
     text = Data.compile_config_file(config.id)
@@ -36,7 +33,30 @@ async def get_config(message: Message, tg_user: User):
     byte_qr.seek(0)
     photo_file = BufferedInputFile(byte_qr.read(), filename="qr.png")
 
-    await message.answer(text)
-    await message.answer_document(text_file)
-    await message.answer_photo(photo_file)
+    await await_with_markup_file(
+        message.answer_document, 
+        text_file, 
+        tg_user, 
+        messages
+    )
+    await await_with_markup_file(
+        message.answer_photo, 
+        photo_file, 
+        tg_user, 
+        messages
+    )
 
+
+async def get_date(message: Message, tg_user: User, messages):
+    builder = UserBuilder(tg_user)
+    user = builder.build()
+    date = user.get_expiration_date()
+    if (date>datetime.datetime.today().date()):
+        date_format = str(date.strftime("%Y.%m.%d"))
+        await message.answer(messages["get_date"].replace("<date>", date_format))
+    else:
+        await message.answer(messages["is_not_payd"])
+
+
+async def get_instruction(message: Message, messages):
+    await message.answer(messages["instruction"])

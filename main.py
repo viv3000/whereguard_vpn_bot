@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import sys
+import json
 
 from dotenv import dotenv_values
 
@@ -20,13 +21,15 @@ from services.data import Data
 from app import App
 
 
-if __name__ == "__main__":
+def main():
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     config = dotenv_values(".env") 
 
     TOKEN = str(config["TG_TOKEN"])
     PAY_TOKEN = str(config["TG_PAY_TOKEN"])
 
+    with open('messages.json', 'r') as file:
+        messages = json.load(file)
 
     engine = create_engine("sqlite:///db.sqlite", echo=True)
     Base.metadata.create_all(engine)
@@ -35,8 +38,13 @@ if __name__ == "__main__":
 
     dispatcher = Dispatcher()
     dispatcher.include_routers(router)
-    bot = VPNBot(token=TOKEN, pay_token=PAY_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    bot = VPNBot(token=TOKEN, pay_token=PAY_TOKEN, messages=messages, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     app = App(bot, dispatcher)
 
 
     asyncio.run(app.start())
+
+
+if __name__ == "__main__":
+    main()
+

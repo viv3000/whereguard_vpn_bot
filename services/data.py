@@ -62,6 +62,19 @@ class Data:
         except NoResultFound as err:
             raise err
 
+
+    @classmethod
+    def extend(cls, tg_user):
+        try:
+            with Session(cls.engine) as session:
+                user = session.scalars(
+                    select(User).where(User.tg_id.in_([tg_user.id]))
+                ).one()
+                user.expiration_date = cls.add_months(user.expiration_date, 1)
+                session.commit()
+        except NoResultFound as err:
+            raise err
+
         
     @classmethod
     def create_server(cls, ip, ipwg, port, interface, wg_interface, private_key, public_key):

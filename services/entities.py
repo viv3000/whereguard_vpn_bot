@@ -28,14 +28,17 @@ class VPNUser:
 
 
     def is_payed(self):
-        return self.__get_expiration_date()>datetime.datetime.today().date()
+        return self.get_expiration_date()>datetime.datetime.today().date()
 
-    def __get_expiration_date(self) -> datetime.datetime:
+    def get_expiration_date(self) -> datetime.datetime:
         return Data.get_expiration_date(self.user_data)
 
 
     def pay(self):
-        return Data.pay(self.user_data)
+        if self.is_payed():
+            return Data.extend(self.user_data)
+        else:
+            return Data.pay(self.user_data)
 
 
     def get_config(self):
