@@ -2,7 +2,7 @@
 	"greetings": "Продолжаем",
 	"greetings_first": "Привет, тебя приветствует лучший vpn сервис в России, название!\nНет возможности зайти на заблокированные сайты в РФ?💔 Приобретай подписку на наш VPN и забудь о медленной работе YouTube или Instagram! 🔥🔥🔥\n\n✅Мы используем сервера в Нидерландах и Финляндии для лучшей скорости на территории РФ!\n✅Подключение с любых устройств на ПК, Android или IOS!\n✅Современный протокол WireGuard отвечающий за скорость и шифрование ваших данных!\n✅Оплата картой Российских банков!\n\n⭐️⭐️Скидка 50% на первые 3 месяца  ⭐️⭐️\nМесячный тариф всего за 100 рублей💸💸💸\n\n‼️После оплаты вы получите файл для подключения и подробную инструкцию для настройки vpn на любом устройстве‼️",
 
-	"instruction": "Установи приложение wireguard\n<a href='https://play.google.com/store/apps/details?id=com.wireguard.android&hl=ru'>Windows</a>\n<a href='https://play.google.com/store/apps/details?id=com.wireguard.android'>Android</a>\n<a href='https://apps.apple.com/ru/app/wireguard/id1441195209'>Ios</a>\n<a href='https://www.wireguard.com/install/'>Остальное</a>\nДалее помести файл в приложение",
+	"instruction": "Как использовать?",
 
 	"pay": "⚡️Купить подписку на VPN за 100р/мес.⚡️",
 	"extend": "⚡️Продлить подписку на VPN за 100р на 1 месяц⚡️",
@@ -29,6 +29,11 @@
 		"support": "❔Тех. подержка❔",
 		"get_date": "⭐️Дата окончания подписки⭐️",
 		"get_config": "⚡️Конфиг файлы⚡️",
-		"get_instruction": "Инструкция"
+		"get_instruction": "Инструкция",
+		"instructions": {
+			"windows": { "url": "https://telegra.ph/Nastrojka-WhereGuard-na-Windows-04-08", "text": "windows" },
+			"ios": { "url": "https://telegra.ph/Nastrojka-WhereGuard-na-IOS-04-08-3", "text": "ios" },
+			"android": { "url": "https://telegra.ph/Nastrojka-WhereGuard-na-Android-04-08", "text": "android" }
+		}
 	}
 }

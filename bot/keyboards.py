@@ -21,3 +21,10 @@ def cancel_keyboard(messages) -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(keyboard=[
         [KeyboardButton(text=messages["buttons"]["cancel"])]
     ])
+
+def instructions_keyboard(messages) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard= [
+        [InlineKeyboardButton(text=messages["buttons"]["instructions"]["windows"]["text"], url=messages["buttons"]["instructions"]["windows"]["url"])],
+        [InlineKeyboardButton(text=messages["buttons"]["instructions"]["ios"]["text"], url=messages["buttons"]["instructions"]["ios"]["url"])],
+        [InlineKeyboardButton(text=messages["buttons"]["instructions"]["android"]["text"], url=messages["buttons"]["instructions"]["android"]["url"])],
+    ])

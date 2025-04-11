@@ -7,7 +7,7 @@ from services.entities import UserBuilder
 from services.data import Data
 
 from bot.helpers import await_with_markup, await_with_markup_file, create_qr
-from bot.keyboards import start_keyboard, main_menu_keyboard
+from bot.keyboards import instructions_keyboard, start_keyboard, main_menu_keyboard
  
 
 async def start(message: Message, tg_user: User, messages):
@@ -59,4 +59,7 @@ async def get_date(message: Message, tg_user: User, messages):
 
 
 async def get_instruction(message: Message, messages):
-    await message.answer(messages["instruction"])
+    await message.answer(
+            messages["instruction"], 
+            reply_markup=instructions_keyboard(messages)
+        )
