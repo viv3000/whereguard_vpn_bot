@@ -30,7 +30,7 @@ def create_peer(i, key):
     )
 
 
-def create_new_server(config):
+def create_new_server(config, number_of_slots=100):
     keys = create_keys()
     server_id = Data.create_server(config["ip"], config["ipwg"], config["port"], config["interface"], config["wg_interface"], keys[0], keys[1])
     file = (
@@ -42,9 +42,8 @@ def create_new_server(config):
         "PostDown = iptables -D FORWARD -i " + config["wg_interface"] + " -j ACCEPT; iptables -t nat -D POSTROUTING -o " + config["interface"] + " -j MASQUERADE\n\n"
     )
 
-    for i in range(100):
+    for i in range(number_of_slots):
         private_key = gen_private_key()
         Data.create_config_file(i, gen_wg_ip(i), server_id, private_key, False)
         file += create_peer(i, gen_public_key(private_key))
     os.system("echo '" + file + "' > " + config["wg_interface"] + ".conf")
-    print("echo '" + file + "' > " + config["wg_interface"] + ".conf")

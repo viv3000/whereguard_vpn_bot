@@ -6,8 +6,10 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state, State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
+from sqlalchemy.exc import NoResultFound
 
 from bot.keyboards import start_keyboard
+from services.data import Data
 from services.entities import UserBuilder
 
 from bot.VPNBot import VPNBot
@@ -98,13 +100,15 @@ async def call_pay(message: Message, state: FSMContext, bot: VPNBot):
 
 
 @pay_router.pre_checkout_query()
-async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
-    builder = UserBuilder(pre_checkout_query.from_user)
-    user = builder.build()
-    if user.is_payed():
+async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: VPNBot):
+    try:
+        Data.get_config(pre_checkout_query.from_user)
         await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
-    else:
-        await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
+    except:
+        await bot.send_message(chat_id=pre_checkout_query.from_user.id, text=bot.messages["end_of_limit"])
+        await send_message_to_log("Капитан, закончились сервера!", pre_checkout_query.from_user, bot)
+        await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=False)
+
 
 
 @pay_router.message(F.successful_payment)

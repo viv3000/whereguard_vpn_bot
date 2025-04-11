@@ -22,7 +22,7 @@ def main():
         "wg_interface": sys.argv[3],
         "interface": sys.argv[4]
     }
-    create_new_server(config_vpn)
+    create_new_server(config_vpn, int(sys.argv[5]))
 
 if __name__ == "__main__":
     main()
