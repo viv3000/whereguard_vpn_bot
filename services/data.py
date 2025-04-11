@@ -57,7 +57,14 @@ class Data:
                 user = session.scalars(
                     select(User).where(User.tg_id.in_([tg_user.id]))
                 ).one()
+                peer_id = cls.get_peer(tg_user)
+                user.peer_id = peer_id 
                 user.expiration_date = cls.add_months(datetime.datetime.today(), 1)
+
+                peer = session.scalars(
+                    select(Peer).where(Peer.id.in_([peer_id]))
+                ).one()
+                peer.is_use = True
                 session.commit()
         except NoResultFound as err:
             raise err
@@ -70,7 +77,14 @@ class Data:
                 user = session.scalars(
                     select(User).where(User.tg_id.in_([tg_user.id]))
                 ).one()
+                peer_id = cls.get_peer(tg_user)
+                user.peer_id = peer_id 
                 user.expiration_date = cls.add_months(user.expiration_date, 1)
+
+                peer = session.scalars(
+                    select(Peer).where(Peer.id.in_([peer_id]))
+                ).one()
+                peer.is_use = True
                 session.commit()
         except NoResultFound as err:
             raise err
@@ -115,7 +129,7 @@ class Data:
         return id
 
     @classmethod
-    def get_peer(cls, tg_user): #rewrite, later
+    def get_peer(cls, tg_user) -> int: #rewrite, later
         try: 
             with Session(cls.engine) as session:
                 user = session.scalars(
@@ -123,19 +137,19 @@ class Data:
                     .where(User.tg_id.in_([tg_user.id]))
                 ).one()
                 try: 
-                    config = session.scalars(
+                    peer = session.scalars(
                         select(Peer)
                         .where(Peer.id.in_([user.peer_id]))
                     ).one()
                 except NoResultFound as err:
                     try:
-                        config = session.scalars(
+                        peer = session.scalars(
                             select(Peer)
                             .where(Peer.is_use.in_([False]))
                         ).all()[0]
                     except NoResultFound as err:
                         raise err
-            return config
+            return peer.id
         except NoResultFound as err:
             raise err
 

@@ -25,7 +25,7 @@ async def get_config(message: Message, tg_user: User, messages):
 
     config = user.get_config()
 
-    text = Data.compile_peer(config.id)
+    text = Data.compile_peer(config)
     text_file = BufferedInputFile(text.encode(), filename="conf.conf")
 
     byte_qr = io.BytesIO()

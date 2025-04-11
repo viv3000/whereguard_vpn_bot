@@ -2,4 +2,6 @@ __pycache__/
 .env
 wg0.conf
 db.sqlite
+buf.db.sqlite
+db.test.sqlite
 db.sqlite-journal
