@@ -102,7 +102,7 @@ async def call_pay(message: Message, state: FSMContext, bot: VPNBot):
 @pay_router.pre_checkout_query()
 async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: VPNBot):
     try:
-        Data.get_config(pre_checkout_query.from_user)
+        Data.get_peer(pre_checkout_query.from_user)
         await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
     except:
         await bot.send_message(chat_id=pre_checkout_query.from_user.id, text=bot.messages["end_of_limit"])

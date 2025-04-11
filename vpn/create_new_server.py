@@ -44,6 +44,6 @@ def create_new_server(config, number_of_slots=100):
 
     for i in range(number_of_slots):
         private_key = gen_private_key()
-        Data.create_config_file(i, gen_wg_ip(i), server_id, private_key, False)
+        Data.create_peer(i, gen_wg_ip(i), server_id, private_key, False)
         file += create_peer(i, gen_public_key(private_key))
     os.system("echo '" + file + "' > " + config["wg_interface"] + ".conf")

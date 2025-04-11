@@ -4,7 +4,7 @@ from aiogram.types import User as TGUser
 from sqlalchemy import Engine
 from sqlalchemy.exc import NoResultFound
 
-from db.models import ConfigFile, Server, User
+from db.models import Peer, Server, User
 
 from services.data import Data
 
@@ -43,7 +43,7 @@ class VPNUser:
 
     def get_config(self):
         if self.is_payed():
-            return Data.get_config(self.user_data)
+            return Data.get_peer(self.user_data)
         else:
             raise NoResultFound()
 

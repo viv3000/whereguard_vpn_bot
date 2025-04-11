@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
-from db.models import Base, ConfigFile, Server, User
+from db.models import Base, Peer, Server, User
 
 class Data:
     engine = None
@@ -98,24 +98,24 @@ class Data:
 
 
     @classmethod
-    def create_config_file(cls, config_id, ip, server_id, private_key, is_use):
+    def create_peer(cls, config_id, ip, server_id, private_key, is_use):
         id = -1
         with Session(cls.engine) as session:
-            config_file = ConfigFile(
+            peer = Peer(
                 config_id = config_id,
                 ip = ip, 
                 server_id = server_id,
                 private_key = private_key,
                 is_use = is_use
             )
-            session.add_all([config_file])
+            session.add_all([peer])
             session.flush()
-            id = config_file.id
+            id = peer.id
             session.commit()
         return id
 
     @classmethod
-    def get_config(cls, tg_user): #rewrite, later
+    def get_peer(cls, tg_user): #rewrite, later
         try: 
             with Session(cls.engine) as session:
                 user = session.scalars(
@@ -124,14 +124,14 @@ class Data:
                 ).one()
                 try: 
                     config = session.scalars(
-                        select(ConfigFile)
-                        .where(ConfigFile.id.in_([user.config_file_id]))
+                        select(Peer)
+                        .where(Peer.id.in_([user.peer_id]))
                     ).one()
                 except NoResultFound as err:
                     try:
                         config = session.scalars(
-                            select(ConfigFile)
-                            .where(ConfigFile.is_use.in_([False]))
+                            select(Peer)
+                            .where(Peer.is_use.in_([False]))
                         ).all()[0]
                     except NoResultFound as err:
                         raise err
@@ -141,10 +141,10 @@ class Data:
 
 
     @classmethod
-    def compile_config_file(cls, config_file_id):
+    def compile_peer(cls, peer_id):
         with Session(cls.engine) as session:
             config = session.scalars(
-                select(ConfigFile).where(ConfigFile.id == config_file_id)
+                select(Peer).where(Peer.id == peer_id)
             ).one()
             server = session.scalars(
                 select(Server).where(Server.id == config.server_id)

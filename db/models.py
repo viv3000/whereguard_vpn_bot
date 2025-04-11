@@ -19,8 +19,8 @@ class Server(Base):
     private_key: Mapped[str] =  mapped_column(String(45))
 
 
-class ConfigFile(Base):
-    __tablename__ = "config_file"
+class Peer(Base):
+    __tablename__ = "peer"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     config_id: Mapped[int] = mapped_column(Integer())
@@ -39,4 +39,4 @@ class User(Base):
     tg_name: Mapped[str] = mapped_column(String(256))
     expiration_date = mapped_column(Date())
 
-    config_file_id: Mapped[int] = mapped_column(ForeignKey("config_file.id"), nullable=True)
+    peer_id: Mapped[int] = mapped_column(ForeignKey("peer.id"), nullable=True)
