@@ -1,5 +1,3 @@
-import logging
-
 from aiogram import F, Bot, Router, types
 from aiogram.types import CallbackQuery, LabeledPrice, Message, PreCheckoutQuery, User
 from aiogram.filters import StateFilter
@@ -9,6 +7,8 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from sqlalchemy.exc import NoResultFound
 
 from bot.keyboards import start_keyboard
+from log import logInfo
+from log import logError
 from services.data import Data
 from services.entities import UserBuilder
 
@@ -31,9 +31,9 @@ async def call_start_pay(call: CallbackQuery, bot: VPNBot):
             call.from_user, 
             bot.messages
         )
-        logging.info(f"start_pay: {call.from_user.username}")
+        logInfo("start pay", call.from_user)
     except Exception as exception:
-        logging.error(f"error in start_pay: {call.from_user.username}", exc_info=True)
+        logError("error in start_pay:", call.from_user)
 
 
 @pay_router.callback_query(F.text == VPNBot.messages["buttons"]["pay"])
@@ -46,9 +46,9 @@ async def message_start_pay(message: Message, bot: VPNBot):
             bot.messages
         )
 
-        logging.info(f"start_pay: {message.from_user.username}")
+        logInfo("start pay", message.from_user)
     except Exception as exception:
-        logging.error(f"error in start_pay: {message.from_user.username}", exc_info=True)
+        logError("error in start_pay:", message.from_user)
 
 
 @pay_router.message(F.text == VPNBot.messages["buttons"]["pay"])
@@ -70,9 +70,9 @@ async def call_pay(message: Message, state: FSMContext, bot: VPNBot):
                         prices=[PRICE],
                         start_parameter="one-month-subscription",
                         payload="pay")
-        logging.info(f"create pay invoice: {message.from_user.username}")
+        logInfo("create pay invoice", message.from_user)
     except Exception as exception:
-        logging.error(f"error in create pay invoice: {message.from_user.username}", exc_info=True)
+        logError(f"error in create pay invoice", message.from_user)
 
 
 @pay_router.message(F.text == VPNBot.messages["buttons"]["extend"])
@@ -94,9 +94,9 @@ async def call_pay(message: Message, state: FSMContext, bot: VPNBot):
                         prices=[PRICE],
                         start_parameter="one-month-subscription",
                         payload="extend")
-        logging.info(f"create pay invoice: {message.from_user.username}")
+        logInfo("create pay invoice", message.from_user)
     except Exception as exception:
-        logging.error(f"error in create pay invoice: {message.from_user.username}", exc_info=True)
+        logError(f"error in create pay invoice", message.from_user)
 
 
 @pay_router.pre_checkout_query()
@@ -120,12 +120,12 @@ async def successful_payment(message: Message, bot: VPNBot):
         await get_config(message, message.from_user, bot.messages)
         await start(message, message.from_user, bot.messages)
         if (message.successful_payment.invoice_payload == "pay"):
-            logging.info(f"successful_payment: {message.from_user.username}")
+            logInfo(f"successful_payment", message.from_user)
             await send_message_to_log("Новый гой нагрет!", message.from_user, bot)
         elif (message.successful_payment.invoice_payload == "extend"):
-            logging.info(f"successful_extend: {message.from_user.username}")
+            logInfo(f"successful_extend", message.from_user)
             await send_message_to_log("Старый гой оплатил ещё месяц!", message.from_user, bot)
     except Exception as exception:
-        logging.error(f"error in pay: {message.from_user.username}", exc_info=True)
+        logError(f"error in pay", message.from_user)
 
 

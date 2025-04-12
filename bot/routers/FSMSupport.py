@@ -1,5 +1,3 @@
-import logging
-
 from aiogram import F, Bot, Router
 from aiogram.types import CallbackQuery, Message
 from aiogram.filters import StateFilter
@@ -11,6 +9,7 @@ from bot.VPNBot import VPNBot
 from bot.handlers import start
 from bot.helpers import send_message_to_support
 from bot.keyboards import cancel_keyboard
+from log import logError, logInfo
 
 support_router = Router()
 storage = MemoryStorage()
@@ -24,9 +23,9 @@ async def call_support(call: CallbackQuery, state: FSMContext, bot: VPNBot):
     try:
         await call.message.answer(text=bot.messages["suport"], reply_markup=cancel_keyboard(bot.messages))
         await state.set_state(FormSupport.support_message)
-        logging.info(f"start support: {call.from_user.username}")
+        logInfo(f"start support", call.from_user)
     except Exception as exception:
-        logging.error(f"error in start support: {call.from_user.username}", exc_info=True)
+        logError(f"error in start support", call.from_user)
 
 
 @support_router.message(F.text == VPNBot.messages["buttons"]["support"], StateFilter(default_state))
@@ -34,9 +33,9 @@ async def message_support(message: Message, state: FSMContext, bot: VPNBot):
     try:
         await message.answer(text=bot.messages["suport"], reply_markup=cancel_keyboard(bot.messages))
         await state.set_state(FormSupport.support_message)
-        logging.info(f"start support: {message.from_user.username}")
+        logInfo(f"start support", message.from_user)
     except Exception as exception:
-        logging.error(f"error in start support: {message.from_user.username}", exc_info=True)
+        logError(f"error in start support", message.from_user)
 
 
 
@@ -51,8 +50,8 @@ async def capture_support(message: Message, state: FSMContext, bot: VPNBot):
             await message.answer(text=bot.messages["after_support"])
             await send_message_to_support(message.text, message.from_user, bot)
             await start(message, message.from_user, bot.messages)
-            logging.info(f"send message: {message.text.encode()} to suport support: {message.from_user.username}")
+            logInfo(f"send message: {message.text.encode()} to suport support", message.from_user)
             await state.clear()
     except Exception as exception:
         await state.clear()
-        logging.error(f"error in start support: {message.from_user.username}", exc_info=True)
+        logError(f"error in start support", message.from_user)

@@ -9,11 +9,17 @@ from services.entities import UserBuilder
 
 
 async def send_message_to_support(text: str, user: User, bot: Bot):
-    await bot.send_message(chat_id=-4711555769, text=f"@{user.username} вопрошает:\n{text}")
+    if (user.username == None):
+        await bot.send_message(chat_id=-4711555769, text=f"tg://openmessage?user_id={user.id} вопрошает:\n{text}")
+    else:
+        await bot.send_message(chat_id=-4711555769, text=f"@{user.username} вопрошает:\n{text}")
 
 
 async def send_message_to_log(message_text, user: User, bot: Bot):
-    await bot.send_message(chat_id=-4711555769, text=f"{message_text}\n@{user.username}")
+    if (user.username == None):
+        await bot.send_message(chat_id=-4711555769, text=f"{message_text}\ntg://openmessage?user_id={user.id}")
+    else:
+        await bot.send_message(chat_id=-4711555769, text=f"{message_text}\n@{user.username}")
 
 
 def create_qr(text):
