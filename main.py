@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import logging
 import sys
 import json
@@ -22,7 +23,9 @@ from app import App
 
 
 def main():
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    logging.basicConfig(
+            filename=f"logs/{datetime.datetime.today()}log.log", filemode="w", level=logging.INFO,
+            format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     config = dotenv_values(".env") 
 
     TOKEN = str(config["TG_TOKEN"])

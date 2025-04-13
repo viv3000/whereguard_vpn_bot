@@ -5,3 +5,9 @@ db.sqlite
 buf.db.sqlite
 db.test.sqlite
 db.sqlite-journal
+logs/*
+logs/log.log
+logs/info.log
+logs/debug.log
+logs/errors.log
+logs/warning.log
