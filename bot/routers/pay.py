@@ -13,7 +13,7 @@ from services.data import Data
 from services.entities import UserBuilder
 
 from bot.VPNBot import VPNBot
-from bot.handlers import get_config, start
+from bot.handlers import get_config, get_instruction, start
 from bot.helpers import await_with_markup, send_message_to_log, send_message_to_support
 
 
@@ -118,6 +118,8 @@ async def successful_payment(message: Message, bot: VPNBot):
         user = builder.build()
         user.pay()
         await get_config(message, message.from_user, bot.messages)
+        await get_instruction(message, bot.messages)
+
         await start(message, message.from_user, bot.messages)
         if (message.successful_payment.invoice_payload == "pay"):
             logInfo(f"successful_payment", message.from_user)
