@@ -1,6 +1,8 @@
 import datetime
 import calendar
 import os 
+import math
+import random
 
 from sqlalchemy import create_engine, select
 from sqlalchemy.exc import NoResultFound
@@ -101,13 +103,27 @@ class Data:
                 interface = interface, 
                 wg_interface = wg_interface, 
                 private_key = private_key, 
-                public_key = public_key
+                public_key = public_key,
+                s1 = math.floor(random.random()*1279)+1,
+                s2 = math.floor(random.random()*1279)+1,
+                h1 = math.floor(random.random()*1279)+1,
+                h2 = math.floor(random.random()*1279)+1,
+                h3 = math.floor(random.random()*1279)+1,
+                h4 = math.floor(random.random()*1279)+1
             )
             session.add_all([server])
             session.flush()
             id = server.id
             session.commit()
         return id
+
+    @classmethod
+    def get_server(cls, server_id):
+        with Session(cls.engine) as session:
+            server = session.scalars(
+                select(Server).where(Server.id == server_id)
+            ).one()
+            return server.__dict__
 
 
 
@@ -157,16 +173,26 @@ class Data:
     @classmethod
     def compile_peer(cls, peer_id):
         with Session(cls.engine) as session:
-            config = session.scalars(
+            peer = session.scalars(
                 select(Peer).where(Peer.id == peer_id)
             ).one()
             server = session.scalars(
-                select(Server).where(Server.id == config.server_id)
+                select(Server).where(Server.id == peer.server_id)
             ).one()
+            Jmax = math.floor(random.random()*1278)+2
             file = ("[Interface]\n" + 
-                "PrivateKey = " + config.private_key + "\n" +
-                "Address = " + Data.gen_wg_ip(config.id) + "\n" +
-                "DNS = 8.8.8.8\n\n" +
+                "PrivateKey = " + peer.private_key + "\n" +
+                "Address = " + Data.gen_wg_ip(peer.id) + "\n" +
+                "DNS = 8.8.8.8\n" +
+                f"Jc = {math.floor(random.random()*127)+1}\n" +
+                f"Jmin = {math.floor(random.random()*(Jmax-1))+1}\n" +
+                f"Jmax = {Jmax}\n" +
+                f"s1 = {server.s1}\n" +
+                f"s2 = {server.s2}\n" +
+                f"h1 = {server.h1}\n" +
+                f"h2 = {server.h2}\n" +
+                f"h3 = {server.h3}\n" +
+                f"h4 = {server.h4}\n\n" +
                 "[Peer]\n" +
                 "PublicKey = " + Data.gen_public_key(server.private_key) + "\n" +
                 "Endpoint = " + server.ip + ":" + server.port + "\n" +
@@ -175,7 +201,7 @@ class Data:
 
     @staticmethod
     def gen_public_key(private_key):
-        return os.popen("echo " + private_key + " | wg pubkey").read()[0:-1]
+        return os.popen("echo " + private_key + " | awg pubkey").read()[0:-1]
 
 
     @staticmethod

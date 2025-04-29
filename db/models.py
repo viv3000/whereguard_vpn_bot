@@ -18,6 +18,13 @@ class Server(Base):
     public_key: Mapped[str] =  mapped_column(String(45))
     private_key: Mapped[str] =  mapped_column(String(45))
 
+    s1: Mapped[str] = mapped_column(Integer(), default=111)
+    s2: Mapped[str] = mapped_column(Integer(), default=112)
+    h1: Mapped[str] = mapped_column(Integer(), default=113)
+    h2: Mapped[str] = mapped_column(Integer(), default=114)
+    h3: Mapped[str] = mapped_column(Integer(), default=115)
+    h4: Mapped[str] = mapped_column(Integer(), default=116)
+
 
 class Peer(Base):
     __tablename__ = "peer"
