@@ -48,12 +48,12 @@ def create_new_server(config, number_of_slots=100):
         f'Jc = {math.floor(random.random()*127)+1}\n' +
         f'Jmin = {math.floor(random.random()*(Jmax-1))+1}\n' +
         f'Jmax = {Jmax}\n' +
-        f'S1 = {server['s1']}\n' +
-        f'S2 = {server['s2']}\n' +
-        f'H1 = {server['h1']}\n' +
-        f'H2 = {server['h2']}\n' +
-        f'H3 = {server['h3']}\n' +
-        f'H4 = {server['h4']}\n\n' 
+        f'S1 = {server["s1"]}\n' +
+        f'S2 = {server["s2"]}\n' +
+        f'H1 = {server["h1"]}\n' +
+        f'H2 = {server["h2"]}\n' +
+        f'H3 = {server["h3"]}\n' +
+        f'H4 = {server["h4"]}\n\n' 
     )
 
     for i in range(number_of_slots):
