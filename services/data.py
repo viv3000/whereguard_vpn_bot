@@ -93,7 +93,7 @@ class Data:
 
         
     @classmethod
-    def create_server(cls, ip, ipwg, port, interface, wg_interface, private_key, public_key):
+    def create_server(cls, ip, ipwg, port, interface, wg_interface, private_key, public_key, ip_local):
         id = -1
         with Session(cls.engine) as session:
             server = Server(
@@ -109,7 +109,8 @@ class Data:
                 h1 = math.floor(random.random()*1279)+1,
                 h2 = math.floor(random.random()*1279)+1,
                 h3 = math.floor(random.random()*1279)+1,
-                h4 = math.floor(random.random()*1279)+1
+                h4 = math.floor(random.random()*1279)+1,
+                ip_local = ip_local
             )
             session.add_all([server])
             session.flush()
@@ -182,7 +183,7 @@ class Data:
             Jmax = math.floor(random.random()*1278)+2
             file = ("[Interface]\n" + 
                 "PrivateKey = " + peer.private_key + "\n" +
-                "Address = " + Data.gen_wg_ip(peer.id) + "\n" +
+                "Address = " + Data.gen_wg_ip(peer.id, server.ip_local) + "\n" +
                 "DNS = 8.8.8.8\n" +
                 f"Jc = {math.floor(random.random()*127)+1}\n" +
                 f"Jmin = {math.floor(random.random()*(Jmax-1))+1}\n" +
@@ -205,8 +206,8 @@ class Data:
 
 
     @staticmethod
-    def gen_wg_ip(i):
-        return "10.11.84." + str(i) + "/32"
+    def gen_wg_ip(i, ip_local):
+        return ip_local + str(i) + "/32"
 
     @staticmethod
     def add_months(sourcedate, months):

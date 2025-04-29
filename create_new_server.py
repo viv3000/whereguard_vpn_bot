@@ -20,9 +20,11 @@ def main():
         "ip": sys.argv[1],
         "port": sys.argv[2],
         "wg_interface": sys.argv[3],
-        "interface": sys.argv[4]
+        "interface": sys.argv[4],
+        "ip_local": sys.argv[5]
+
     }
-    create_new_server(config_vpn, int(sys.argv[5]))
+    create_new_server(config_vpn, int(sys.argv[6]))
 
 if __name__ == "__main__":
     main()

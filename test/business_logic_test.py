@@ -17,7 +17,7 @@ Base.metadata.create_all(engine)
 Data.engine = engine
 
 
-argv = ["main.py", "147.45.240.229", "25569", "wg0", "eth0", "200"]
+argv = ["main.py", "147.45.240.229", "25569", "wg0", "eth0", "10.10.10.", "200"]
 
 config_vpn = {
         "ipwg": "10.11.84.101/24",

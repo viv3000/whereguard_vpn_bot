@@ -12,6 +12,7 @@ class Server(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     ip: Mapped[str] = mapped_column(String(16))
     ipwg: Mapped[str] = mapped_column(String(19))
+    ip_local: Mapped[str] = mapped_column(String(19))
     port: Mapped[str] = mapped_column(String(5))
     interface: Mapped[str] = mapped_column(String(256))
     wg_interface: Mapped[str] = mapped_column(String(256))
