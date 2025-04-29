@@ -187,12 +187,12 @@ class Data:
                 f"Jc = {math.floor(random.random()*127)+1}\n" +
                 f"Jmin = {math.floor(random.random()*(Jmax-1))+1}\n" +
                 f"Jmax = {Jmax}\n" +
-                f"s1 = {server.s1}\n" +
-                f"s2 = {server.s2}\n" +
-                f"h1 = {server.h1}\n" +
-                f"h2 = {server.h2}\n" +
-                f"h3 = {server.h3}\n" +
-                f"h4 = {server.h4}\n\n" +
+                f"S1 = {server.s1}\n" +
+                f"S2 = {server.s2}\n" +
+                f"H1 = {server.h1}\n" +
+                f"H2 = {server.h2}\n" +
+                f"H3 = {server.h3}\n" +
+                f"H4 = {server.h4}\n\n" +
                 "[Peer]\n" +
                 "PublicKey = " + Data.gen_public_key(server.private_key) + "\n" +
                 "Endpoint = " + server.ip + ":" + server.port + "\n" +
