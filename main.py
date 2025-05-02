@@ -3,6 +3,7 @@ import datetime
 import logging
 import sys
 import json
+import threading
 
 from dotenv import dotenv_values
 
@@ -15,6 +16,7 @@ from sqlalchemy import create_engine
 from bot.VPNBot import VPNBot
 from bot.router import router
 
+from bot.server.server import CmdServer
 from db.models import Base
 
 from services.data import Data
@@ -22,7 +24,7 @@ from services.data import Data
 from app import App
 
 
-def main():
+async def main():
     logging.basicConfig(
             filename=f"logs/{datetime.datetime.today()}log.log", filemode="w", level=logging.INFO,
             format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
@@ -43,11 +45,9 @@ def main():
     dispatcher.include_routers(router)
     bot = VPNBot(token=TOKEN, pay_token=PAY_TOKEN, messages=messages, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     app = App(bot, dispatcher)
-
-
-    asyncio.run(app.start())
-
+    await asyncio.gather(app.start(), CmdServer.start_cmd_server(bot))
 
 if __name__ == "__main__":
-    main()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
 

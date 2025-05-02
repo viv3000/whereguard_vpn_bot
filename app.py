@@ -12,4 +12,5 @@ class App:
         self.dispatcher = dispatcher
 
     async def start(self) -> None:
+        print('start bot')
         await self.dispatcher.start_polling(self.bot)

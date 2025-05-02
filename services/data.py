@@ -172,6 +172,17 @@ class Data:
 
 
     @classmethod
+    def get_all_users(cls) -> list[User]:
+            print(111)
+            users_ret = None
+            with Session(cls.engine) as session:
+                users = session.query(User).all()
+                users_ret = users.copy()
+                session.flush()
+            return users_ret
+
+
+    @classmethod
     def compile_peer(cls, peer_id):
         with Session(cls.engine) as session:
             peer = session.scalars(
