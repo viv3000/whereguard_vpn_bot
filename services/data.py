@@ -173,7 +173,6 @@ class Data:
 
     @classmethod
     def get_all_users(cls) -> list[User]:
-            print(111)
             users_ret = None
             with Session(cls.engine) as session:
                 users = session.query(User).all()
