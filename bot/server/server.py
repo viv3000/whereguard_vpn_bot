@@ -60,7 +60,10 @@ class CmdServer:
         elif (data[0] == "send_alerts"):
             for user in Data.get_all_users():
                 different = user.expiration_date - datetime.date.today()
-                if ((different.days<3) or (different.day>0)): 
+                if ((different.days<3) and (different.days>0)): 
+                    await bot.send_message(
+                            chat_id=bot.non_payers_chat_id,
+                            text=f'{user.tg_name}: {user.tg_id} (осталось: {different.days}д)')
                     await bot.send_message(
                             chat_id=user.tg_id,
                             text=bot.messages['alert'].replace(
