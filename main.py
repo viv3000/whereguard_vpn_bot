@@ -34,6 +34,7 @@ async def main():
     TOKEN = str(config["TG_TOKEN"])
     PAY_TOKEN = str(config["TG_PAY_TOKEN"])
     ADMIN_TOKEN = str(config["TG_ADMIN_TOKEN"])
+    SUPPORT_CHAT_ID = int(str(config["SUPPORT_CHAT_ID"]))
 
     with open('messages.json', 'r') as file:
         messages = json.load(file)
@@ -45,7 +46,7 @@ async def main():
 
     dispatcher = Dispatcher()
     dispatcher.include_routers(router)
-    bot = VPNBot(token=TOKEN, pay_token=PAY_TOKEN, messages=messages, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    bot = VPNBot(token=TOKEN, pay_token=PAY_TOKEN, support_chat_id=SUPPORT_CHAT_ID, messages=messages, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     app = App(bot, dispatcher)
 
 

@@ -22,6 +22,7 @@ class VPNBot(Bot):
         self,
         token: str,
         pay_token: str,
+        support_chat_id: int,
         messages,
         session: Optional[BaseSession] = None,
         default: Optional[DefaultBotProperties] = None,
@@ -29,4 +30,5 @@ class VPNBot(Bot):
     ) -> None:
         super().__init__(token=token, session=session, default=default, **kwargs, )
         self.pay_token = pay_token
+        self.support_chat_id = support_chat_id
         self.messages = VPNBot.messages
