@@ -1,4 +1,5 @@
 from asyncio.streams import StreamReader, StreamWriter
+import datetime
 import socket
 import asyncio
 
@@ -11,7 +12,6 @@ class CmdServer:
 
     @staticmethod
     async def start_cmd_server(bot):
-        print('start cmd server')
         CmdServer.bot = bot
         server = await asyncio.start_server(CmdServer.handle_connetcion, 'localhost', 9090)
         async with server:
@@ -20,7 +20,6 @@ class CmdServer:
     @staticmethod
     async def handle_connetcion(reader: StreamReader, writer: StreamWriter):
         addr = writer.get_extra_info('peername')
-        print("Connected by", addr)
         while True:
             await CmdServer.read(reader, writer, addr)
 
@@ -31,7 +30,6 @@ class CmdServer:
             raw_data = await reader.read(1024)
             data = raw_data.decode().split('/')
         except ConnectionError:
-            print(f"Client suddenly closed while receiving from {addr}")
             writer.close()
             reader.close()
             return
@@ -40,29 +38,35 @@ class CmdServer:
             writer.close()
             reader.close()
         except ConnectionError:
-            print(f"Client suddenly closed, cannot send")
             writer.close()
             reader.close()
             return
 
 
     @staticmethod
-    async def create_exist(data, bot) -> bytes:
+    async def create_exist(data, bot: VPNBot) -> bytes:
         if (data[0] == "send_message"):
             await bot.send_message(chat_id=data[1], text=data[2])
             return b'Ok'
         elif (data[0] == "newsletter_message"):
-            users = Data.get_all_users()
-            ret = ''
-            for user in users:
+            for user in Data.get_all_users():
                 await bot.send_message(chat_id=user.tg_id, text=data[1])
             return b'Ok'
         elif (data[0] == "get_all_users"):
-            users = Data.get_all_users()
             ret = ''
-            for user in users:
+            for user in Data.get_all_users():
                 ret += str([user.id, user.tg_name, user.tg_id, user.expiration_date, user.peer_id])
             return ret.encode()
+        elif (data[0] == "send_alerts"):
+            for user in Data.get_all_users():
+                different = user.expiration_date - datetime.date.today()
+                if ((different.days<3) or (different.day>0)): 
+                    await bot.send_message(
+                            chat_id=user.tg_id,
+                            text=bot.messages['alert'].replace(
+                                '<day>',
+                                str(different.days)))
+            return b'Ok'
         else:
             return b'404'
 
