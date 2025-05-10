@@ -22,10 +22,10 @@ admin_text = {
             '/send_message'
         ]),
 
-        'send_massage_start': 'Сообщение:',
-        'send_massage_get_user_id': 'id пользователя:',
+        'send_massage_start': 'для отмены /cancel\nСообщение:',
+        'send_massage_get_user_id': 'для отмены /cancel\nid пользователя:',
 
-        'send_newsletter_start': 'Сообщение:',
+        'send_newsletter_start': 'для отмены /cancel\nСообщение:',
 }
 
 
@@ -55,6 +55,10 @@ class FormSendMessage(StatesGroup):
 
 @admin_router.message(Command("send_message"), StateFilter(default_state))
 async def cmd_send_message_start(message: Message, state: FSMContext):
+    if (message.text == "/cancel"): 
+        await state.clear()
+        await message.answer(text=admin_text['commands'])
+        return
     try:
         users = Data.get_all_users()
         users_keys = []
@@ -78,6 +82,10 @@ async def cmd_send_message_start(message: Message, state: FSMContext):
 
 @admin_router.message(F.text, FormSendMessage.tg_id)
 async def send_message_capture_message(message: Message, state: FSMContext):
+    if (message.text == "/cancel"): 
+        await state.clear()
+        await message.answer(text=admin_text['commands'])
+        return
     try:
         await state.update_data(tg_id=message.text)
         await message.answer(text=admin_text["send_massage_start"])
@@ -89,6 +97,10 @@ async def send_message_capture_message(message: Message, state: FSMContext):
 
 @admin_router.message(F.text, FormSendMessage.message)
 async def send_message_capture_tg_id(message: Message, state: FSMContext, bot: AdminBot):
+    if (message.text == "/cancel"): 
+        await state.clear()
+        await message.answer(text=admin_text['commands'])
+        return
     try:
         await state.update_data(message=message.text)
         send_message_data = await state.get_data()
@@ -107,8 +119,11 @@ class FormSendNewsletter(StatesGroup):
 
 @admin_router.message(Command("newsletter_message"), StateFilter(default_state))
 async def cmd_send_newsletter_start(message: Message, state: FSMContext):
+    if (message.text == "/cancel"): 
+        await state.clear()
+        await message.answer(text=admin_text['commands'])
+        return
     try:
-
         await message.answer(text=admin_text["send_massage_start"])
 
         await state.set_state(FormSendNewsletter.message)
@@ -119,6 +134,10 @@ async def cmd_send_newsletter_start(message: Message, state: FSMContext):
 
 @admin_router.message(F.text, FormSendNewsletter.message)
 async def cmd_send_newsletter_capture_message(message: Message, state: FSMContext, bot: AdminBot):
+    if (message.text == "/cancel"): 
+        await state.clear()
+        await message.answer(text=admin_text['commands'])
+        return
     try:
         await state.update_data(message=message.text)
         users = Data.get_all_users()
