@@ -28,6 +28,13 @@ admin_text = {
         'send_newsletter_start': 'для отмены /cancel\nСообщение:',
 }
 
+main_menu_keyboard = [
+    KeyboardButton(text='/start'),
+    KeyboardButton(text='/get_all_users'),
+    KeyboardButton(text='/newsletter_message'),
+    KeyboardButton(text='/send_message'),
+]
+
 
 @admin_router.message(Command("start"))
 async def cmd_start(message: Message):
@@ -44,7 +51,10 @@ async def cmd_get_all_users(message: Message):
         users_keys.append(KeyboardButton(text=f'{user.tg_id}'))
 
     await message.answer(text=users_text, reply_markup=None)
-    await message.answer(text=admin_text['commands'])
+    await message.answer(
+            text=admin_text['commands'], 
+            reply_markup=ReplyKeyboardMarkup(keyboard=[main_menu_keyboard])
+    )
 
 
 storage = MemoryStorage()
@@ -57,7 +67,10 @@ class FormSendMessage(StatesGroup):
 async def cmd_send_message_start(message: Message, state: FSMContext):
     if (message.text == "/cancel"): 
         await state.clear()
-        await message.answer(text=admin_text['commands'])
+        await message.answer(
+                text=admin_text['commands'], 
+                reply_markup=ReplyKeyboardMarkup(keyboard=[main_menu_keyboard])
+        )
         return
     try:
         users = Data.get_all_users()
@@ -84,7 +97,10 @@ async def cmd_send_message_start(message: Message, state: FSMContext):
 async def send_message_capture_message(message: Message, state: FSMContext):
     if (message.text == "/cancel"): 
         await state.clear()
-        await message.answer(text=admin_text['commands'])
+        await message.answer(
+                text=admin_text['commands'], 
+                reply_markup=ReplyKeyboardMarkup(keyboard=[main_menu_keyboard])
+        )
         return
     try:
         await state.update_data(tg_id=message.text)
@@ -99,7 +115,10 @@ async def send_message_capture_message(message: Message, state: FSMContext):
 async def send_message_capture_tg_id(message: Message, state: FSMContext, bot: AdminBot):
     if (message.text == "/cancel"): 
         await state.clear()
-        await message.answer(text=admin_text['commands'])
+        await message.answer(
+                text=admin_text['commands'], 
+                reply_markup=ReplyKeyboardMarkup(keyboard=[main_menu_keyboard])
+        )
         return
     try:
         await state.update_data(message=message.text)
@@ -107,10 +126,16 @@ async def send_message_capture_tg_id(message: Message, state: FSMContext, bot: A
         await bot.vpnBot.send_message(chat_id=send_message_data['tg_id'], text=send_message_data['message'])
         await message.answer(text="Готово")
         await state.clear()
-        await message.answer(text=admin_text['commands'])
+        await message.answer(
+                text=admin_text['commands'], 
+                reply_markup=ReplyKeyboardMarkup(keyboard=[main_menu_keyboard])
+        )
     except Exception as exception:
         await state.clear()
-        await message.answer(text=admin_text['commands'])
+        await message.answer(
+                text=admin_text['commands'], 
+                reply_markup=ReplyKeyboardMarkup(keyboard=[main_menu_keyboard])
+        )
 
 
 
@@ -121,7 +146,10 @@ class FormSendNewsletter(StatesGroup):
 async def cmd_send_newsletter_start(message: Message, state: FSMContext):
     if (message.text == "/cancel"): 
         await state.clear()
-        await message.answer(text=admin_text['commands'])
+        await message.answer(
+                text=admin_text['commands'], 
+                reply_markup=ReplyKeyboardMarkup(keyboard=[main_menu_keyboard])
+        )
         return
     try:
         await message.answer(text=admin_text["send_massage_start"])
@@ -136,7 +164,10 @@ async def cmd_send_newsletter_start(message: Message, state: FSMContext):
 async def cmd_send_newsletter_capture_message(message: Message, state: FSMContext, bot: AdminBot):
     if (message.text == "/cancel"): 
         await state.clear()
-        await message.answer(text=admin_text['commands'])
+        await message.answer(
+                text=admin_text['commands'], 
+                reply_markup=ReplyKeyboardMarkup(keyboard=[main_menu_keyboard])
+        )
         return
     try:
         await state.update_data(message=message.text)
@@ -146,10 +177,16 @@ async def cmd_send_newsletter_capture_message(message: Message, state: FSMContex
 
         await state.clear()
         await message.answer(text="Готово")
-        await message.answer(text=admin_text['commands'])
+        await message.answer(
+                text=admin_text['commands'], 
+                reply_markup=ReplyKeyboardMarkup(keyboard=[main_menu_keyboard])
+        )
     except Exception as exception:
         await state.clear()
-        await message.answer(text=admin_text['commands'])
+        await message.answer(
+                text=admin_text['commands'], 
+                reply_markup=ReplyKeyboardMarkup(keyboard=[main_menu_keyboard])
+        )
 
 
 
