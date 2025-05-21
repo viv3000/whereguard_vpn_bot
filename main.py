@@ -32,11 +32,13 @@ async def main():
 
     TOKEN = str(config["TG_TOKEN"])
     PAY_TOKEN = str(config["TG_PAY_TOKEN"])
+    CONNECTION_STRING = str(config["CONNECTION_STRING"])
+
 
     with open('messages.json', 'r') as file:
         messages = json.load(file)
 
-    engine = create_engine("sqlite:///db.sqlite", echo=True)
+    engine = create_engine(CONNECTION_STRING, echo=True)
     Base.metadata.create_all(engine)
     Data.engine = engine
 

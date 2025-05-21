@@ -1,5 +1,7 @@
 import sys
 
+from dotenv import dotenv_values
+
 from sqlalchemy import create_engine
 
 
@@ -11,7 +13,9 @@ from vpn.create_new_server import create_new_server
 
 
 def main():
-    engine = create_engine("sqlite:///db.sqlite", echo=True)
+    config = dotenv_values(".env") 
+    CONNECTION_STRING = str(config["CONNECTION_STRING"])
+    engine = create_engine(CONNECTION_STRING, echo=True)
     Base.metadata.create_all(engine)
     Data.engine = engine
 
