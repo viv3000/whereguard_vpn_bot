@@ -19,7 +19,7 @@ class Data:
             with Session(cls.engine) as session:
                 user = session.scalars(
                     select(User)
-                    .where(User.tg_id.in_([tg_user.id]))
+                    .where(User.tg_id.in_([str(tg_user.id)]))
                 ).one()
             return user
         except NoResultFound as err:
@@ -57,7 +57,7 @@ class Data:
         try:
             with Session(cls.engine) as session:
                 user = session.scalars(
-                    select(User).where(User.tg_id.in_([tg_user.id]))
+                    select(User).where(User.tg_id.in_([str(tg_user.id)]))
                 ).one()
                 peer_id = cls.get_peer(tg_user)
                 user.peer_id = peer_id 
@@ -77,7 +77,7 @@ class Data:
         try:
             with Session(cls.engine) as session:
                 user = session.scalars(
-                    select(User).where(User.tg_id.in_([tg_user.id]))
+                    select(User).where(User.tg_id.in_([str(tg_user.id)]))
                 ).one()
                 peer_id = cls.get_peer(tg_user)
                 user.peer_id = peer_id 
@@ -151,7 +151,7 @@ class Data:
             with Session(cls.engine) as session:
                 user = session.scalars(
                     select(User)
-                    .where(User.tg_id.in_([tg_user.id]))
+                    .where(User.tg_id.in_([str(tg_user.id)]))
                 ).one()
                 try: 
                     peer = session.scalars(
