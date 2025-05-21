@@ -40,7 +40,7 @@ class Peer(Base):
 
 
 class User(Base):
-    __tablename__ = "user"
+    __tablename__ = "vpn_user"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     tg_id: Mapped[str] = mapped_column(String(256))
