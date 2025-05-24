@@ -46,5 +46,6 @@ class User(Base):
     tg_id: Mapped[str] = mapped_column(String(256))
     tg_name: Mapped[str] = mapped_column(String(256), nullable=True)
     expiration_date = mapped_column(Date())
+    is_not_use_it: Mapped[bool] = mapped_column(Boolean(), default=False)
 
     peer_id: Mapped[int] = mapped_column(ForeignKey("peer.id"), nullable=True)

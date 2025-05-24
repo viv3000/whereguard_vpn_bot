@@ -53,6 +53,14 @@ class Data:
 
 
     @classmethod
+    def get_is_not_use_it(cls, tg_user) -> bool:
+        try:
+            return cls.get_user_on_tg(tg_user).is_not_use_it
+        except NoResultFound as err:
+            raise err
+
+
+    @classmethod
     def pay(cls, tg_user):
         try:
             with Session(cls.engine) as session:
