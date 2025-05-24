@@ -37,11 +37,25 @@ class Data:
                     tg_id = tg_user.id, 
                     tg_name = tg_user.username, 
                     expiration_date = expiration_date,
+                    is_not_use_it = True,
                 )
                 session.add_all([user])
                 session.flush()
                 session.commit()
             return user
+
+    @classmethod
+    def set_is_not_use_it(cls, tg_user, is_not_use_it):
+        try:
+            with Session(cls.engine) as session:
+                user = session.scalars(
+                    select(User).where(User.tg_id.in_([str(tg_user.id)]))
+                ).one()
+                user.is_not_use_it = is_not_use_it 
+                session.commit()
+        except NoResultFound as err:
+            raise err
+
 
 
     @classmethod

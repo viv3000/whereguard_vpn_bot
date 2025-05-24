@@ -45,6 +45,7 @@ class VPNUser:
             return Data.extend(self.user_data)
         else:
             if self.is_not_use_it():
+                Data.set_is_not_use_it(self.user_data, False)
                 Data.pay(self.user_data)
                 return Data.extend(self.user_data)
             else:
